@@ -1,0 +1,90 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+int main() {
+    int k;
+    string alf_ru = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";//словарь русского языка
+    string alf_by = "абвгдеёжзійклмнопрстуўфхцчшыьэюя";//словарь белорусского языка
+    string alf_en = "abcdefghijklmnopqrstuvwxyz0123456789#!@$%^&-+=";//словарь английского языка
+    string buf;//массив для ввода сообщения
+    string decod;//массив для ввода сообщения
+    string alf;//используемый словарь
+
+    cout << "\nProgramma shifrovanija kodom Tsezarja" << endl;
+
+    // Выбор языка
+    cout << "\nVyberite yazyk: " << endl;
+    cout << "1. Russkij" << endl;
+    cout << "2. Belorusskij" << endl;
+    cout << "3. Anglijskij" << endl;
+    int lang;
+    cin >> lang;
+    switch (lang) {
+        case 1:
+            alf = alf_ru;
+            break;
+        case 2:
+            alf = alf_by;
+            break;
+        case 3:
+            alf = alf_en;
+            break;
+        default:
+            cout << "Nepravilnyj vybor yazyka" << endl;
+            return 0;
+    }
+
+    // Шифрование
+    cout << "\nShifrovanie" << endl;
+    cout << "Vvedite slovo ili tsifrj: ";
+    cin.ignore();//ignores the newline character left in the input stream by the previous cin
+    getline(cin, buf);//ввод слова или цифр
+    cout << "Vvedite tzifrovoj cluch, (shag ot 1 do 10): ";
+    cin >> k;//вводим ключ
+
+    for (int i = 0; i < buf.length(); i++) {
+        for (int j = 0; j < alf.length(); j++) {
+            if (buf[i] == alf[j]) {
+                buf[i] = alf[(j + k) % alf.length()];//сдвигаем вправо на показания шага ключа
+                break;
+            }
+        }
+    }
+
+    cout << "Vash shefr: " << buf << endl;//выводим полученный шифр
+
+    // Дешифрование
+    cout << "\n--Deshifrovanie---" << endl;
+    cout << "Vvedite vash shifr: ";
+    cin.ignore();//ignores the newline character left in the input stream by the previous cin
+    getline(cin, decod);//вводим шифр
+    cout << "Vvedite tzifrovoj cluch, (shag ot 1 do 10): ";
+    cin >> k;//вводим ключ
+
+    for (int i = 0; i < decod.length(); i++) {
+        for (int j = 0; j < alf.length(); j++) {
+            if (decod[i] == alf[j]) {
+                decod[i] = alf[(j - k + alf.length()) % alf.length()];//сдвигаем влево на показания шага ключа
+                break;
+            }
+        }
+    }
+
+    cout << "Shefr: " << decod << endl;//выводим код
+
+    // Запись в файл
+    ofstream file("output.txt");
+    if (file.is_open()) {
+        file << "Vash shefr: " << buf << endl;
+        file << "Shefr: " << decod << endl;
+        file.close();
+        cout << "Dannye zapisany v fajl output.txt" << endl;
+    } else {
+        cout << "Ne udalos otkryt fajl" << endl;
+    }
+
+    return 0;
+}
